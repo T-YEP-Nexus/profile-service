@@ -7,6 +7,9 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest",
+    "test:profile": "jest profile.test.js",
+    "test:student": "jest student.test.js",
+    "test:all": "jest --testPathPattern=\"(profile|student)\\.test\\.js\"",
     "lint": "eslint src/"
   },
   "dependencies": {
