@@ -15,6 +15,32 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Route de test pour vérifier la connexion Supabase
+app.get('/health', async (req, res) => {
+  try {
+    // Test de connexion à Supabase
+    const { data, error } = await supabase.from('user_profile').select('count').limit(1);
+    if (error) {
+      return res.status(500).json({ 
+        status: 'error', 
+        message: 'Erreur de connexion à Supabase',
+        error: error.message 
+      });
+    }
+    res.json({ 
+      status: 'success', 
+      message: 'Service de profil opérationnel',
+      supabase: 'connecté'
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Erreur interne du serveur',
+      error: err.message 
+    });
+  }
+});
+
 // Utilisation des routes
 app.use('/', profileRoutes);
 app.use('/', studentRoutes);
