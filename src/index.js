@@ -6,6 +6,8 @@ require('dotenv').config();
 // Import des routes
 const profileRoutes = require('../routes/profileRoutes');
 const studentRoutes = require('../routes/studentRoutes');
+const adminRoutes = require('../routes/adminRoutes');
+
 
 const app = express();
 
@@ -42,8 +44,12 @@ app.get('/health', async (req, res) => {
 });
 
 // Utilisation des routes
-app.use('/', profileRoutes);
-app.use('/', studentRoutes);
+app.use('', profileRoutes);
+app.use('', studentRoutes);
+app.use('', adminRoutes);
+
+
+
 
 const PORT = process.env.PORT || 3004;
 
