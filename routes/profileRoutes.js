@@ -138,7 +138,7 @@ router.get('/profile/user/:user_id', async (req, res) => {
 // create a user profile
 router.post('/profile', async (req, res) => {
   try {
-    const { id_user, first_name, last_name, phone, address, is_active, roles_user } = req.body;
+    const { id_user, first_name, last_name, phone, address, campus, is_active, roles_user } = req.body;
 
     if (!id_user) {
       return res.status(400).json({
@@ -198,6 +198,7 @@ router.post('/profile', async (req, res) => {
       ...(last_name && { last_name }),
       ...(phone && { phone }),
       ...(address && { address }),
+      ...(campus && { campus }),
       ...(is_active !== undefined && { is_active }),
       ...(roles_user && { roles_user })
     };
