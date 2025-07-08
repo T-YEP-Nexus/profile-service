@@ -144,10 +144,53 @@ router.get('/advisor/profile/:id_user_profile', async (req, res) => {
   }
 });
 
+// get advisors by specialty
+router.get('/advisors/specialty/:specialty', async (req, res) => {
+  try {
+    const { specialty } = req.params;
+
+    if (!specialty) {
+      return res.status(400).json({
+        success: false,
+        message: 'Specialty parameter is required'
+      });
+    }
+
+    const { data, error } = await supabase
+      .from('advisor')
+      .select('*')
+      .eq('specialty', specialty);
+
+    if (error) {
+      console.error('Error fetching advisors by specialty:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch advisors by specialty',
+        error: error.message
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Advisors for specialty '${specialty}' retrieved successfully`,
+      data: data,
+      count: data.length
+    });
+
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: err.message
+    });
+  }
+});
+
 // create an advisor
 router.post('/advisor', async (req, res) => {
   try {
-    const { specialty, room, availibity, id_user_profile } = req.body;
+    const { specialty, room, availability, id_user_profile } = req.body;
 
     if (!id_user_profile) {
       return res.status(400).json({
@@ -206,7 +249,7 @@ router.post('/advisor', async (req, res) => {
       id_user_profile: profileId,
       ...(specialty && { specialty }),
       ...(room && { room }),
-      ...(availibity && { availibity })
+      ...(availability && { availability })
     };
 
     const { data, error } = await supabase
@@ -244,7 +287,7 @@ router.post('/advisor', async (req, res) => {
 router.patch('/advisor/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { specialty, room, availibity } = req.body;
+    const { specialty, room, availability } = req.body;
 
     // validate that id is a number
     const advisorId = parseInt(id);
@@ -255,7 +298,7 @@ router.patch('/advisor/:id', async (req, res) => {
       });
     }
 
-    if (!specialty && !room && !availibity) {
+    if (!specialty && !room && !availability) {
       return res.status(400).json({
         success: false,
         message: 'At least one field must be provided for update'
@@ -265,7 +308,7 @@ router.patch('/advisor/:id', async (req, res) => {
     const updateData = {};
     if (specialty !== undefined) updateData.specialty = specialty;
     if (room !== undefined) updateData.room = room;
-    if (availibity !== undefined) updateData.availibity = availibity;
+    if (availability !== undefined) updateData.availability = availability;
 
     const { data, error } = await supabase
       .from('advisor')
