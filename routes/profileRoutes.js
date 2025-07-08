@@ -238,7 +238,7 @@ router.post('/profile', async (req, res) => {
 router.patch('/profile/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { first_name, last_name, phone, address, is_active, roles_user } = req.body;
+    const { first_name, last_name, phone, address, campus, is_active, roles_user } = req.body;
 
     // validate that id is a number
     const profileId = parseInt(id);
@@ -249,7 +249,7 @@ router.patch('/profile/:id', async (req, res) => {
       });
     }
 
-    if (!first_name && !last_name && !phone && !address && is_active === undefined && !roles_user) {
+    if (!first_name && !last_name && !phone && !address && !campus && is_active === undefined && !roles_user) {
       return res.status(400).json({
         success: false,
         message: 'At least one field must be provided for update'
@@ -261,6 +261,7 @@ router.patch('/profile/:id', async (req, res) => {
     if (last_name !== undefined) updateData.last_name = last_name;
     if (phone !== undefined) updateData.phone = phone;
     if (address !== undefined) updateData.address = address;
+    if (campus !== undefined) updateData.campus = campus;
     if (is_active !== undefined) updateData.is_active = is_active;
     if (roles_user !== undefined) updateData.roles_user = roles_user;
 

@@ -144,53 +144,10 @@ router.get('/student/profile/:id_user_profile', async (req, res) => {
   }
 });
 
-// get students by promotion
-router.get('/students/promotion/:promotion', async (req, res) => {
-  try {
-    const { promotion } = req.params;
-
-    if (!promotion) {
-      return res.status(400).json({
-        success: false,
-        message: 'Promotion parameter is required'
-      });
-    }
-
-    const { data, error } = await supabase
-      .from('student')
-      .select('*')
-      .eq('promotion', promotion);
-
-    if (error) {
-      console.error('Error fetching students by promotion:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to fetch students by promotion',
-        error: error.message
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: `Students for promotion '${promotion}' retrieved successfully`,
-      data: data,
-      count: data.length
-    });
-
-  } catch (err) {
-    console.error('Unexpected error:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: err.message
-    });
-  }
-});
-
 // create a student
 router.post('/student', async (req, res) => {
   try {
-    const { student_number, promotion, major, id_user_profile } = req.body;
+    const { student_number, major, id_prom, id_user_profile } = req.body;
 
     if (!id_user_profile) {
       return res.status(400).json({
@@ -208,6 +165,14 @@ router.post('/student', async (req, res) => {
       });
     }
 
+    const promId = parseInt(id_prom);
+    if (isNaN(promId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid prom ID format'
+      });
+    }
+
     // Check if user profile exists
     const { data: existingProfile, error: profileCheckError } = await supabase
       .from('user-profile')
@@ -219,6 +184,20 @@ router.post('/student', async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'User profile not found'
+      });
+    }
+
+    // Check if promotion exists
+    const { data: existingProm, error: promCheckError } = await supabase
+      .from('promotion')
+      .select('id')
+      .eq('id', promId)
+      .single();
+
+    if (promCheckError || !existingProm) {
+      return res.status(400).json({
+        success: false,
+        message: 'Promotion not found'
       });
     }
 
@@ -272,8 +251,8 @@ router.post('/student', async (req, res) => {
 
     const studentData = {
       id_user_profile: profileId,
+      id_prom: promId,
       ...(student_number && { student_number }),
-      ...(promotion && { promotion }),
       ...(major && { major })
     };
 
@@ -312,7 +291,7 @@ router.post('/student', async (req, res) => {
 router.patch('/student/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { student_number, promotion, major } = req.body;
+    const { student_number, id_prom, major } = req.body;
 
     // validate that id is a number
     const studentId = parseInt(id);
@@ -323,11 +302,35 @@ router.patch('/student/:id', async (req, res) => {
       });
     }
 
-    if (!student_number && !promotion && !major) {
+    if (!student_number && !id_prom && !major) {
       return res.status(400).json({
         success: false,
         message: 'At least one field must be provided for update'
       });
+    }
+
+    // Check if promotion exists (if provided)
+    if (id_prom) {
+      const promId = parseInt(id_prom);
+      if (isNaN(promId)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid promotion ID format'
+        });
+      }
+
+      const { data: existingProm, error: promCheckError } = await supabase
+        .from('promotion')
+        .select('id')
+        .eq('id', promId)
+        .single();
+
+      if (promCheckError || !existingProm) {
+        return res.status(400).json({
+          success: false,
+          message: 'Promotion not found'
+        });
+      }
     }
 
     // Check if student_number is unique (if provided)
@@ -358,7 +361,7 @@ router.patch('/student/:id', async (req, res) => {
 
     const updateData = {};
     if (student_number !== undefined) updateData.student_number = student_number;
-    if (promotion !== undefined) updateData.promotion = promotion;
+    if (id_prom !== undefined) updateData.id_prom = parseInt(id_prom);
     if (major !== undefined) updateData.major = major;
 
     const { data, error } = await supabase
@@ -468,4 +471,4 @@ router.delete('/student/:id', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;
