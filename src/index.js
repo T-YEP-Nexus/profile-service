@@ -8,6 +8,8 @@ const profileRoutes = require('../routes/profileRoutes');
 const studentRoutes = require('../routes/studentRoutes');
 const advisorRoutes = require('../routes/advisorRoutes');
 const adminRoutes = require('../routes/adminRoutes');
+const promRoutes = require('../routes/promotionRoutes');
+
 
 const app = express();
 
@@ -48,6 +50,8 @@ app.use('', profileRoutes);
 app.use('', advisorRoutes);
 app.use('', studentRoutes);
 app.use('', adminRoutes);
+app.use('', promRoutes);
+
 
 const PORT = process.env.PORT || 3004;
 
