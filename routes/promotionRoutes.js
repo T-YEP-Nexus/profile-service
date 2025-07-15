@@ -4,6 +4,12 @@ const router = express.Router();
 
 const supabase = require('../config/supabaseClient');
 
+// Helper function to validate UUID
+const isValidUUID = (uuid) => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+};
+
 // crud routes for the 'promotion' table
 
 // get all promotions
@@ -45,9 +51,8 @@ router.get('/promotion/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    // validate that id is a number
-    const promotionId = parseInt(id);
-    if (!id || isNaN(promotionId)) {
+    // validate that id is a valid UUID
+    if (!id || !isValidUUID(id)) {
       return res.status(400).json({
         success: false,
         message: 'Invalid promotion ID provided'
@@ -57,7 +62,7 @@ router.get('/promotion/:id', async (req, res) => {
     const { data, error } = await supabase
       .from('promotion')
       .select('*')
-      .eq('id', promotionId)
+      .eq('id', id)
       .single();
 
     if (error) {
@@ -212,9 +217,8 @@ router.patch('/promotion/:id', async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
-    // validate that id is a number
-    const promotionId = parseInt(id);
-    if (!id || isNaN(promotionId)) {
+    // validate that id is a valid UUID
+    if (!id || !isValidUUID(id)) {
       return res.status(400).json({
         success: false,
         message: 'Invalid promotion ID provided'
@@ -233,7 +237,7 @@ router.patch('/promotion/:id', async (req, res) => {
       .from('promotion')
       .select('id')
       .ilike('name', name.trim())
-      .neq('id', promotionId)
+      .neq('id', id)
       .single();
 
     if (nameCheckError && nameCheckError.code !== 'PGRST116') {
@@ -259,7 +263,7 @@ router.patch('/promotion/:id', async (req, res) => {
     const { data, error } = await supabase
       .from('promotion')
       .update(updateData)
-      .eq('id', promotionId)
+      .eq('id', id)
       .select()
       .single();
 
@@ -300,9 +304,8 @@ router.delete('/promotion/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    // validate that id is a number
-    const promotionId = parseInt(id);
-    if (!id || isNaN(promotionId)) {
+    // validate that id is a valid UUID
+    if (!id || !isValidUUID(id)) {
       return res.status(400).json({
         success: false,
         message: 'Invalid promotion ID provided'
@@ -313,7 +316,7 @@ router.delete('/promotion/:id', async (req, res) => {
     const { data: existingPromotion, error: checkError } = await supabase
       .from('promotion')
       .select('*')
-      .eq('id', promotionId)
+      .eq('id', id)
       .single();
 
     if (checkError) {
@@ -336,7 +339,7 @@ router.delete('/promotion/:id', async (req, res) => {
     const { data: studentsUsingPromotion, error: studentsCheckError } = await supabase
       .from('student')
       .select('id')
-      .eq('id_prom', promotionId)
+      .eq('id_prom', id)
       .limit(1);
 
     if (studentsCheckError) {
@@ -358,7 +361,7 @@ router.delete('/promotion/:id', async (req, res) => {
     const { error } = await supabase
       .from('promotion')
       .delete()
-      .eq('id', promotionId);
+      .eq('id', id);
 
     if (error) {
       console.error('Error deleting promotion:', error);
