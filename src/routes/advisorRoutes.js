@@ -5,8 +5,26 @@ const router = express.Router();
 const supabase = require('../../config/supabaseClient');
 
 // crud routes for the 'advisor' table
+/**
+ * @swagger
+ * tags:
+ *   name: Advisors
+ *   description: API for managing advisors
+ */
 
 // get all advisors
+/**
+ * @swagger
+ * /advisors:
+ *   get:
+ *     summary: Get all advisors
+ *     tags: [Advisors]
+ *     responses:
+ *       200:
+ *         description: Advisors retrieved successfully
+ *       500:
+ *         description: Server error
+ */
 router.get('/advisors', async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -40,6 +58,29 @@ router.get('/advisors', async (req, res) => {
 });
 
 // get an advisor by id
+/**
+ * @swagger
+ * /advisor/{id}:
+ *   get:
+ *     summary: Get an advisor by ID
+ *     tags: [Advisors]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Advisor ID
+ *     responses:
+ *       200:
+ *         description: Advisor retrieved successfully
+ *       400:
+ *         description: Invalid advisor ID provided
+ *       404:
+ *         description: Advisor not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/advisor/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -93,6 +134,29 @@ router.get('/advisor/:id', async (req, res) => {
 });
 
 // get an advisor by user profile id
+/**
+ * @swagger
+ * /advisor/profile/{id_user_profile}:
+ *   get:
+ *     summary: Get an advisor by user profile ID
+ *     tags: [Advisors]
+ *     parameters:
+ *       - in: path
+ *         name: id_user_profile
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: User profile ID
+ *     responses:
+ *       200:
+ *         description: Advisor retrieved successfully
+ *       400:
+ *         description: Invalid user profile ID provided
+ *       404:
+ *         description: Advisor not found for this user profile
+ *       500:
+ *         description: Server error
+ */
 router.get('/advisor/profile/:id_user_profile', async (req, res) => {
   try {
     const { id_user_profile } = req.params;
@@ -145,6 +209,27 @@ router.get('/advisor/profile/:id_user_profile', async (req, res) => {
 });
 
 // get advisors by specialty
+/**
+ * @swagger
+ * /advisors/specialty/{specialty}:
+ *   get:
+ *     summary: Get advisors by specialty
+ *     tags: [Advisors]
+ *     parameters:
+ *       - in: path
+ *         name: specialty
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Advisor specialty
+ *     responses:
+ *       200:
+ *         description: Advisors retrieved successfully
+ *       400:
+ *         description: Specialty parameter is required
+ *       500:
+ *         description: Server error
+ */
 router.get('/advisors/specialty/:specialty', async (req, res) => {
   try {
     const { specialty } = req.params;
@@ -188,6 +273,39 @@ router.get('/advisors/specialty/:specialty', async (req, res) => {
 });
 
 // create an advisor
+/**
+ * @swagger
+ * /advisor:
+ *   post:
+ *     summary: Create a new advisor
+ *     tags: [Advisors]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id_user_profile
+ *             properties:
+ *               id_user_profile:
+ *                 type: integer
+ *               specialty:
+ *                 type: string
+ *               room:
+ *                 type: string
+ *               availability:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Advisor created successfully
+ *       400:
+ *         description: Invalid input or user profile not found
+ *       409:
+ *         description: Advisor already exists
+ *       500:
+ *         description: Server error
+ */
 router.post('/advisor', async (req, res) => {
   try {
     const { specialty, room, availability, id_user_profile } = req.body;
@@ -284,6 +402,42 @@ router.post('/advisor', async (req, res) => {
 });
 
 // update an advisor
+/**
+ * @swagger
+ * /advisor/{id}:
+ *   patch:
+ *     summary: Update an existing advisor
+ *     tags: [Advisors]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Advisor ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               specialty:
+ *                 type: string
+ *               room:
+ *                 type: string
+ *               availability:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Advisor updated successfully
+ *       400:
+ *         description: Invalid advisor ID or missing update fields
+ *       404:
+ *         description: Advisor not found
+ *       500:
+ *         description: Server error
+ */
 router.patch('/advisor/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -350,6 +504,29 @@ router.patch('/advisor/:id', async (req, res) => {
 });
 
 // delete an advisor
+/**
+ * @swagger
+ * /advisor/{id}:
+ *   delete:
+ *     summary: Delete an advisor
+ *     tags: [Advisors]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Advisor ID
+ *     responses:
+ *       200:
+ *         description: Advisor deleted successfully
+ *       400:
+ *         description: Invalid advisor ID
+ *       404:
+ *         description: Advisor not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/advisor/:id', async (req, res) => {
   try {
     const { id } = req.params;
