@@ -6,8 +6,26 @@ const router = express.Router();
 const supabase = require('../../config/supabaseClient');
 
 // crud routes for the 'user-profile' table
+/**
+ * @swagger
+ * tags:
+ *   name: UserProfiles
+ *   description: API for managing user profiles
+ */
 
 // get all user profiles
+/**
+ * @swagger
+ * /profiles:
+ *   get:
+ *     summary: Get all user profiles
+ *     tags: [UserProfiles]
+ *     responses:
+ *       200:
+ *         description: User profiles retrieved successfully
+ *       500:
+ *         description: Server error
+ */
 router.get('/profiles', async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -41,6 +59,29 @@ router.get('/profiles', async (req, res) => {
 });
 
 // get a user profile by id
+/**
+ * @swagger
+ * /profile/{id}:
+ *   get:
+ *     summary: Get a user profile by ID
+ *     tags: [UserProfiles]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: User profile ID
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully
+ *       400:
+ *         description: Invalid user profile ID provided
+ *       404:
+ *         description: User profile not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/profile/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -94,6 +135,27 @@ router.get('/profile/:id', async (req, res) => {
 });
 
 // get a user profile by user_id
+/**
+ * @swagger
+ * /profile/user/{user_id}:
+ *   get:
+ *     summary: Get a user profile by user ID (UUID)
+ *     tags: [UserProfiles]
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: UUID of the user
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully
+ *       400:
+ *         description: Invalid user ID provided
+ *       500:
+ *         description: Server error
+ */
 router.get('/profile/user/:user_id', async (req, res) => {
   try {
     const { user_id } = req.params;
@@ -136,6 +198,47 @@ router.get('/profile/user/:user_id', async (req, res) => {
 });
 
 // create a user profile
+/**
+ * @swagger
+ * /profile:
+ *   post:
+ *     summary: Create a new user profile
+ *     tags: [UserProfiles]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id_user
+ *             properties:
+ *               id_user:
+ *                 type: string
+ *               first_name:
+ *                 type: string
+ *               last_name:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               campus:
+ *                 type: string
+ *               is_active:
+ *                 type: boolean
+ *               roles_user:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User profile created successfully
+ *       400:
+ *         description: Invalid input or user ID
+ *       409:
+ *         description: User profile already exists
+ *       500:
+ *         description: Server error
+ */
 router.post('/profile', async (req, res) => {
   try {
     const { id_user, first_name, last_name, phone, address, campus, is_active, roles_user } = req.body;
@@ -235,6 +338,50 @@ router.post('/profile', async (req, res) => {
 });
 
 // update a user profile
+/**
+ * @swagger
+ * /profile/{id}:
+ *   patch:
+ *     summary: Update an existing user profile
+ *     tags: [UserProfiles]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: User profile ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               first_name:
+ *                 type: string
+ *               last_name:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               campus:
+ *                 type: string
+ *               is_active:
+ *                 type: boolean
+ *               roles_user:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User profile updated successfully
+ *       400:
+ *         description: Invalid user profile ID or missing update fields
+ *       404:
+ *         description: User profile not found
+ *       500:
+ *         description: Server error
+ */
 router.patch('/profile/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -305,6 +452,31 @@ router.patch('/profile/:id', async (req, res) => {
 });
 
 // delete a user profile
+/**
+ * @swagger
+ * /profile/{id}:
+ *   delete:
+ *     summary: Delete a user profile
+ *     tags: [UserProfiles]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: User profile ID
+ *     responses:
+ *       200:
+ *         description: User profile deleted successfully
+ *       400:
+ *         description: Invalid user profile ID
+ *       404:
+ *         description: User profile not found
+ *       409:
+ *         description: Profile is referenced and cannot be deleted
+ *       500:
+ *         description: Server error
+ */
 router.delete('/profile/:id', async (req, res) => {
   try {
     const { id } = req.params;
