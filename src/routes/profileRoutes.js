@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import de la configuration Supabase
-const supabase = require('../config/supabaseClient');
+const supabase = require('../../config/supabaseClient');
 
 // crud routes for the 'user-profile' table
 

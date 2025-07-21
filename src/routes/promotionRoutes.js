@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const supabase = require('../config/supabaseClient');
+const supabase = require('../../config/supabaseClient');
 
 // Helper function to validate UUID
 const isValidUUID = (uuid) => {
