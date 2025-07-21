@@ -3,11 +3,29 @@ const express = require('express');
 const router = express.Router();
 
 // Import de la configuration Supabase
-const supabase = require('../config/supabaseClient');
+const supabase = require('../../config/supabaseClient');
 
 // crud routes for the 'admin' table
+/**
+ * @swagger
+ * tags:
+ *   name: Admins
+ *   description: API for managing admin users
+ */
 
 // get all admins
+/**
+ * @swagger
+ * /admins:
+ *   get:
+ *     summary: Get all admins
+ *     tags: [Admins]
+ *     responses:
+ *       200:
+ *         description: Admins retrieved successfully
+ *       500:
+ *         description: Server error
+ */
 router.get('/admins', async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -41,6 +59,29 @@ router.get('/admins', async (req, res) => {
 });
 
 // get an admin by id
+/**
+ * @swagger
+ * /admin/{id}:
+ *   get:
+ *     summary: Get an admin by ID
+ *     tags: [Admins]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Admin ID
+ *     responses:
+ *       200:
+ *         description: Admin retrieved successfully
+ *       400:
+ *         description: Invalid admin ID provided
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/admin/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -94,6 +135,29 @@ router.get('/admin/:id', async (req, res) => {
 });
 
 // get an admin by user_profile_id
+/**
+ * @swagger
+ * /admin/profile/{user_profile_id}:
+ *   get:
+ *     summary: Get an admin by user profile ID
+ *     tags: [Admins]
+ *     parameters:
+ *       - in: path
+ *         name: user_profile_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: User profile ID
+ *     responses:
+ *       200:
+ *         description: Admin retrieved successfully
+ *       400:
+ *         description: Invalid user profile ID provided
+ *       404:
+ *         description: Admin not found for this user profile
+ *       500:
+ *         description: Server error
+ */
 router.get('/admin/profile/:user_profile_id', async (req, res) => {
   try {
     const { user_profile_id } = req.params;
@@ -146,6 +210,33 @@ router.get('/admin/profile/:user_profile_id', async (req, res) => {
 });
 
 // create an admin
+/**
+ * @swagger
+ * /admin:
+ *   post:
+ *     summary: Create a new admin
+ *     tags: [Admins]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id_user_profile
+ *             properties:
+ *               id_user_profile:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Admin created successfully
+ *       400:
+ *         description: Invalid user profile ID
+ *       409:
+ *         description: Admin already exists for this user profile
+ *       500:
+ *         description: Server error
+ */
 router.post('/admin', async (req, res) => {
   try {
     const { id_user_profile } = req.body;
@@ -239,6 +330,42 @@ router.post('/admin', async (req, res) => {
 });
 
 // update an admin
+/**
+ * @swagger
+ * /admin/{id}:
+ *   patch:
+ *     summary: Update an admin
+ *     tags: [Admins]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Admin ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id_user_profile
+ *             properties:
+ *               id_user_profile:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Admin updated successfully
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Admin not found
+ *       409:
+ *         description: Another admin already exists for this user profile
+ *       500:
+ *         description: Server error
+ */
 router.patch('/admin/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -351,6 +478,29 @@ router.patch('/admin/:id', async (req, res) => {
 });
 
 // delete an admin
+/**
+ * @swagger
+ * /admin/{id}:
+ *   delete:
+ *     summary: Delete an admin
+ *     tags: [Admins]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Admin ID
+ *     responses:
+ *       200:
+ *         description: Admin deleted successfully
+ *       400:
+ *         description: Invalid admin ID
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/admin/:id', async (req, res) => {
   try {
     const { id } = req.params;

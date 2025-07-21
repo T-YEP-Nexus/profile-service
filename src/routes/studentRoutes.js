@@ -2,11 +2,29 @@ const express = require('express');
 
 const router = express.Router();
 
-const supabase = require('../config/supabaseClient');
+const supabase = require('../../config/supabaseClient');
 
 // crud routes for the 'student' table
+/**
+ * @swagger
+ * tags:
+ *   name: Students
+ *   description: API for managing students
+ */
 
 // get all students
+/**
+ * @swagger
+ * /students:
+ *   get:
+ *     summary: Get all students
+ *     tags: [Students]
+ *     responses:
+ *       200:
+ *         description: Students retrieved successfully
+ *       500:
+ *         description: Server error
+ */
 router.get('/students', async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -40,6 +58,30 @@ router.get('/students', async (req, res) => {
 });
 
 // get a student by id
+
+/**
+ * @swagger
+ * /student/{id}:
+ *   get:
+ *     summary: Get a student by ID
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Student ID
+ *     responses:
+ *       200:
+ *         description: Student retrieved successfully
+ *       400:
+ *         description: Invalid student ID provided
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/student/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -93,6 +135,29 @@ router.get('/student/:id', async (req, res) => {
 });
 
 // get a student by user profile id
+/**
+ * @swagger
+ * /student/profile/{id_user_profile}:
+ *   get:
+ *     summary: Get a student by user profile ID
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: id_user_profile
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: User profile ID
+ *     responses:
+ *       200:
+ *         description: Student retrieved successfully
+ *       400:
+ *         description: Invalid user profile ID provided
+ *       404:
+ *         description: Student not found for this user profile
+ *       500:
+ *         description: Server error
+ */
 router.get('/student/profile/:id_user_profile', async (req, res) => {
   try {
     const { id_user_profile } = req.params;
@@ -145,6 +210,44 @@ router.get('/student/profile/:id_user_profile', async (req, res) => {
 });
 
 // create a student
+/**
+ * @swagger
+ * /student:
+ *   post:
+ *     summary: Create a new student
+ *     tags: [Students]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id_user_profile
+ *               - id_promotion
+ *             properties:
+ *               student_number:
+ *                 type: string
+ *                 description: Student number (optional, must be unique if provided)
+ *               major:
+ *                 type: string
+ *                 description: Major of the student (optional)
+ *               id_promotion:
+ *                 type: string
+ *                 description: UUID of the promotion
+ *               id_user_profile:
+ *                 type: integer
+ *                 description: User profile ID
+ *     responses:
+ *       201:
+ *         description: Student created successfully
+ *       400:
+ *         description: Invalid input or related entity not found
+ *       409:
+ *         description: Student or student number already exists
+ *       500:
+ *         description: Server error
+ */
 router.post('/student', async (req, res) => {
   try {
     const { student_number, major, id_promotion, id_user_profile } = req.body;
@@ -288,6 +391,45 @@ router.post('/student', async (req, res) => {
 });
 
 // update a student
+/**
+ * @swagger
+ * /student/{id}:
+ *   patch:
+ *     summary: Update an existing student
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Student ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               student_number:
+ *                 type: string
+ *               id_promotion:
+ *                 type: string
+ *                 description: UUID of the promotion
+ *               major:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Student updated successfully
+ *       400:
+ *         description: Invalid student ID or input data
+ *       404:
+ *         description: Student not found
+ *       409:
+ *         description: Student number already exists
+ *       500:
+ *         description: Server error
+ */
 router.patch('/student/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -404,6 +546,29 @@ router.patch('/student/:id', async (req, res) => {
 });
 
 // delete a student
+/**
+ * @swagger
+ * /student/{id}:
+ *   delete:
+ *     summary: Delete a student
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Student ID
+ *     responses:
+ *       200:
+ *         description: Student deleted successfully
+ *       400:
+ *         description: Invalid student ID
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/student/:id', async (req, res) => {
   try {
     const { id } = req.params;

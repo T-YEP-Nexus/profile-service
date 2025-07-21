@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const supabase = require('../config/supabaseClient');
+const supabase = require('../../config/supabaseClient');
 
 // Helper function to validate UUID
 const isValidUUID = (uuid) => {
@@ -11,8 +11,26 @@ const isValidUUID = (uuid) => {
 };
 
 // crud routes for the 'promotion' table
+/**
+ * @swagger
+ * tags:
+ *   name: Promotions
+ *   description: API for managing promotions
+ */
 
 // get all promotions
+/**
+ * @swagger
+ * /promotions:
+ *   get:
+ *     summary: Get all promotions
+ *     tags: [Promotions]
+ *     responses:
+ *       200:
+ *         description: Promotions retrieved successfully
+ *       500:
+ *         description: Server error
+ */
 router.get('/promotions', async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -47,6 +65,29 @@ router.get('/promotions', async (req, res) => {
 });
 
 // get a promotion by id
+/**
+ * @swagger
+ * /promotion/{id}:
+ *   get:
+ *     summary: Get a promotion by ID
+ *     tags: [Promotions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: UUID of the promotion
+ *     responses:
+ *       200:
+ *         description: Promotion retrieved successfully
+ *       400:
+ *         description: Invalid promotion ID provided
+ *       404:
+ *         description: Promotion not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/promotion/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -98,6 +139,27 @@ router.get('/promotion/:id', async (req, res) => {
 });
 
 // get a promotion by name
+/**
+ * @swagger
+ * /promotion/name/{name}:
+ *   get:
+ *     summary: Get a promotion by name (case-insensitive)
+ *     tags: [Promotions]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Name (or partial name) of the promotion
+ *     responses:
+ *       200:
+ *         description: Promotions matching name retrieved successfully
+ *       400:
+ *         description: Promotion name is required
+ *       500:
+ *         description: Server error
+ */
 router.get('/promotion/name/:name', async (req, res) => {
   try {
     const { name } = req.params;
@@ -142,6 +204,33 @@ router.get('/promotion/name/:name', async (req, res) => {
 });
 
 // create a promotion
+/**
+ * @swagger
+ * /promotion:
+ *   post:
+ *     summary: Create a new promotion
+ *     tags: [Promotions]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Promotion created successfully
+ *       400:
+ *         description: Promotion name is required
+ *       409:
+ *         description: Promotion name already exists
+ *       500:
+ *         description: Server error
+ */
 router.post('/promotion', async (req, res) => {
   try {
     const { name } = req.body;
@@ -212,6 +301,42 @@ router.post('/promotion', async (req, res) => {
 });
 
 // update a promotion
+/**
+ * @swagger
+ * /promotion/{id}:
+ *   patch:
+ *     summary: Update an existing promotion
+ *     tags: [Promotions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: UUID of the promotion
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Promotion updated successfully
+ *       400:
+ *         description: Invalid promotion ID or missing name
+ *       404:
+ *         description: Promotion not found
+ *       409:
+ *         description: Promotion name already exists
+ *       500:
+ *         description: Server error
+ */
 router.patch('/promotion/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -300,6 +425,31 @@ router.patch('/promotion/:id', async (req, res) => {
 });
 
 // delete a promotion
+/**
+ * @swagger
+ * /promotion/{id}:
+ *   delete:
+ *     summary: Delete a promotion
+ *     tags: [Promotions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: UUID of the promotion
+ *     responses:
+ *       200:
+ *         description: Promotion deleted successfully
+ *       400:
+ *         description: Invalid promotion ID
+ *       404:
+ *         description: Promotion not found
+ *       409:
+ *         description: Cannot delete promotion - it is currently used by students
+ *       500:
+ *         description: Server error
+ */
 router.delete('/promotion/:id', async (req, res) => {
   try {
     const { id } = req.params;

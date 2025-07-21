@@ -2,14 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
-
-// Import des routes
-const profileRoutes = require('../routes/profileRoutes');
-const studentRoutes = require('../routes/studentRoutes');
-const advisorRoutes = require('../routes/advisorRoutes');
-const adminRoutes = require('../routes/adminRoutes');
-const promRoutes = require('../routes/promotionRoutes');
-
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 const app = express();
 
@@ -19,47 +13,23 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Route de test pour vérifier la connexion Supabase
-app.get('/health', async (req, res) => {
-  try {
-    // Test de connexion à Supabase
-    const { data, error } = await supabase.from('user_profile').select('count').limit(1);
-    if (error) {
-      return res.status(500).json({ 
-        status: 'error', 
-        message: 'Erreur de connexion à Supabase',
-        error: error.message 
-      });
-    }
-    res.json({ 
-      status: 'success', 
-      message: 'Service de profil opérationnel',
-      supabase: 'connecté'
-    });
-  } catch (err) {
-    res.status(500).json({ 
-      status: 'error', 
-      message: 'Erreur interne du serveur',
-      error: err.message 
-    });
-  }
-});
+const profileRoutes = require('./routes/profileRoutes.js');
+const studentRoutes = require('./routes/studentRoutes.js');
+const advisorRoutes = require('./routes/advisorRoutes.js');
+const adminRoutes = require('./routes/adminRoutes.js');
+const promRoutes = require('./routes/promotionRoutes.js');
 
-// Utilisation des routes
 app.use('', profileRoutes);
 app.use('', advisorRoutes);
 app.use('', studentRoutes);
 app.use('', adminRoutes);
 app.use('', promRoutes);
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const PORT = process.env.PORT || 3004;
-
-// Ne démarrer le serveur que si on n'est pas en mode test
-if (process.env.NODE_ENV !== 'test') {
-  const server = app.listen(PORT, () => {
-    console.log(`Server started on http://localhost:${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Serveur démarré et à l'écoute sur le port ${PORT}`);
+});
 
 module.exports = app;
