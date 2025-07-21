@@ -18,12 +18,14 @@ const studentRoutes = require('./routes/studentRoutes.js');
 const advisorRoutes = require('./routes/advisorRoutes.js');
 const adminRoutes = require('./routes/adminRoutes.js');
 const promRoutes = require('./routes/promotionRoutes.js');
+const informationRoutes = require('./routes/informationRoutes.js');
 
 app.use('', profileRoutes);
 app.use('', advisorRoutes);
 app.use('', studentRoutes);
 app.use('', adminRoutes);
 app.use('', promRoutes);
+app.use('', informationRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
