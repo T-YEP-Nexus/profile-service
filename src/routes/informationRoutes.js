@@ -100,10 +100,10 @@ router.get('/information/:id', async (req, res) => {
  */
 router.post('/information', async (req, res) => {
   try {
-    const { message, id_creator } = req.body;
+    const { title, message, id_creator } = req.body;
 
-    if (!message || typeof id_creator !== 'number') {
-      return res.status(400).json({ success: false, message: 'Message and valid id_creator are required' });
+    if (!title || !message || typeof id_creator !== 'number') {
+      return res.status(400).json({ success: false, message: 'Title, message, and valid id_creator are required' });
     }
 
     // Check if the exact message already exists
@@ -125,7 +125,7 @@ router.post('/information', async (req, res) => {
     // Insert if no duplicate
     const { data, error } = await supabase
       .from('informations')
-      .insert([{ message, id_creator }])
+      .insert([{ title, message, id_creator }])
       .select()
       .single();
 
