@@ -1,12 +1,13 @@
-const express = require('express');
+const express = require("express");
 
 const router = express.Router();
 
-const supabase = require('../../config/supabaseClient');
+const supabase = require("../../config/supabaseClient");
 
 // Helper function to validate UUID
 const isValidUUID = (uuid) => {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
 };
 
@@ -31,35 +32,34 @@ const isValidUUID = (uuid) => {
  *       500:
  *         description: Server error
  */
-router.get('/promotions', async (req, res) => {
+router.get("/promotions", async (req, res) => {
   try {
     const { data, error } = await supabase
-      .from('promotion')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("promotion")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching promotions:', error);
+      console.error("Error fetching promotions:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to fetch promotions',
-        error: error.message
+        message: "Failed to fetch promotions",
+        error: error.message,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Promotions retrieved successfully',
+      message: "Promotions retrieved successfully",
       data: data,
-      count: data.length
+      count: data.length,
     });
-
   } catch (err) {
-    console.error('Unexpected error:', err);
+    console.error("Unexpected error:", err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
-      error: err.message
+      message: "Internal server error",
+      error: err.message,
     });
   }
 });
@@ -88,7 +88,7 @@ router.get('/promotions', async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.get('/promotion/:id', async (req, res) => {
+router.get("/promotion/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -96,44 +96,43 @@ router.get('/promotion/:id', async (req, res) => {
     if (!id || !isValidUUID(id)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid promotion ID provided'
+        message: "Invalid promotion ID provided",
       });
     }
 
     const { data, error } = await supabase
-      .from('promotion')
-      .select('*')
-      .eq('id', id)
+      .from("promotion")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         return res.status(404).json({
           success: false,
-          message: 'Promotion not found'
+          message: "Promotion not found",
         });
       }
 
-      console.error('Error fetching promotion:', error);
+      console.error("Error fetching promotion:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to fetch promotion',
-        error: error.message
+        message: "Failed to fetch promotion",
+        error: error.message,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Promotion retrieved successfully',
-      data: data
+      message: "Promotion retrieved successfully",
+      data: data,
     });
-
   } catch (err) {
-    console.error('Unexpected error:', err);
+    console.error("Unexpected error:", err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
-      error: err.message
+      message: "Internal server error",
+      error: err.message,
     });
   }
 });
@@ -160,29 +159,29 @@ router.get('/promotion/:id', async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.get('/promotion/name/:name', async (req, res) => {
+router.get("/promotion/name/:name", async (req, res) => {
   try {
     const { name } = req.params;
 
-    if (!name || name.trim() === '') {
+    if (!name || name.trim() === "") {
       return res.status(400).json({
         success: false,
-        message: 'Promotion name is required'
+        message: "Promotion name is required",
       });
     }
 
     const { data, error } = await supabase
-      .from('promotion')
-      .select('*')
-      .ilike('name', `%${name}%`)
-      .order('created_at', { ascending: false });
+      .from("promotion")
+      .select("*")
+      .ilike("name", `%${name}%`)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching promotion by name:', error);
+      console.error("Error fetching promotion by name:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to fetch promotion by name',
-        error: error.message
+        message: "Failed to fetch promotion by name",
+        error: error.message,
       });
     }
 
@@ -190,15 +189,14 @@ router.get('/promotion/name/:name', async (req, res) => {
       success: true,
       message: `Promotions matching '${name}' retrieved successfully`,
       data: data,
-      count: data.length
+      count: data.length,
     });
-
   } catch (err) {
-    console.error('Unexpected error:', err);
+    console.error("Unexpected error:", err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
-      error: err.message
+      message: "Internal server error",
+      error: err.message,
     });
   }
 });
@@ -231,71 +229,73 @@ router.get('/promotion/name/:name', async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.post('/promotion', async (req, res) => {
+router.post("/promotion", async (req, res) => {
   try {
     const { name } = req.body;
 
-    if (!name || name.trim() === '') {
+    if (!name || name.trim() === "") {
       return res.status(400).json({
         success: false,
-        message: 'Promotion name is required'
+        message: "Promotion name is required",
       });
     }
 
     // Check if promotion name already exists
     const { data: existingPromotion, error: nameCheckError } = await supabase
-      .from('promotion')
-      .select('id')
-      .ilike('name', name.trim())
+      .from("promotion")
+      .select("id")
+      .ilike("name", name.trim())
       .single();
 
-    if (nameCheckError && nameCheckError.code !== 'PGRST116') {
-      console.error('Error checking promotion name uniqueness:', nameCheckError);
+    if (nameCheckError && nameCheckError.code !== "PGRST116") {
+      console.error(
+        "Error checking promotion name uniqueness:",
+        nameCheckError
+      );
       return res.status(500).json({
         success: false,
-        message: 'Failed to check promotion name uniqueness',
-        error: nameCheckError.message
+        message: "Failed to check promotion name uniqueness",
+        error: nameCheckError.message,
       });
     }
 
     if (existingPromotion) {
       return res.status(409).json({
         success: false,
-        message: 'Promotion name already exists'
+        message: "Promotion name already exists",
       });
     }
 
     const promotionData = {
-      name: name.trim()
+      name: name.trim(),
     };
 
     const { data, error } = await supabase
-      .from('promotion')
+      .from("promotion")
       .insert([promotionData])
       .select()
       .single();
 
     if (error) {
-      console.error('Error creating promotion:', error);
+      console.error("Error creating promotion:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to create promotion',
-        error: error.message
+        message: "Failed to create promotion",
+        error: error.message,
       });
     }
 
     res.status(201).json({
       success: true,
-      message: 'Promotion created successfully',
-      data: data
+      message: "Promotion created successfully",
+      data: data,
     });
-
   } catch (err) {
-    console.error('Unexpected error:', err);
+    console.error("Unexpected error:", err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
-      error: err.message
+      message: "Internal server error",
+      error: err.message,
     });
   }
 });
@@ -337,7 +337,7 @@ router.post('/promotion', async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.patch('/promotion/:id', async (req, res) => {
+router.patch("/promotion/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
@@ -346,80 +346,82 @@ router.patch('/promotion/:id', async (req, res) => {
     if (!id || !isValidUUID(id)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid promotion ID provided'
+        message: "Invalid promotion ID provided",
       });
     }
 
-    if (!name || name.trim() === '') {
+    if (!name || name.trim() === "") {
       return res.status(400).json({
         success: false,
-        message: 'Promotion name is required for update'
+        message: "Promotion name is required for update",
       });
     }
 
     // Check if promotion name already exists (excluding current promotion)
     const { data: existingPromotion, error: nameCheckError } = await supabase
-      .from('promotion')
-      .select('id')
-      .ilike('name', name.trim())
-      .neq('id', id)
+      .from("promotion")
+      .select("id")
+      .ilike("name", name.trim())
+      .neq("id", id)
       .single();
 
-    if (nameCheckError && nameCheckError.code !== 'PGRST116') {
-      console.error('Error checking promotion name uniqueness:', nameCheckError);
+    if (nameCheckError && nameCheckError.code !== "PGRST116") {
+      console.error(
+        "Error checking promotion name uniqueness:",
+        nameCheckError
+      );
       return res.status(500).json({
         success: false,
-        message: 'Failed to check promotion name uniqueness',
-        error: nameCheckError.message
+        message: "Failed to check promotion name uniqueness",
+        error: nameCheckError.message,
       });
     }
 
     if (existingPromotion) {
       return res.status(409).json({
         success: false,
-        message: 'Promotion name already exists'
+        message: "Promotion name already exists",
       });
     }
 
     const updateData = {
-      name: name.trim()
+      name: name.trim(),
     };
 
     const { data, error } = await supabase
-      .from('promotion')
+      .from("promotion")
       .update(updateData)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         return res.status(404).json({
           success: false,
-          message: 'Promotion not found'
+          message: "Promotion not found",
         });
       }
 
-      console.error('Error updating promotion:', error);
+      console.error("Error updating promotion:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to update promotion',
-        error: error.message
+        message: "Failed to update promotion",
+        error: error.message,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Promotion updated successfully',
-      data: data
+      message: "Promotion updated successfully",
+      data: data,
     });
-
   } catch (err) {
-    console.error('Unexpected error:', err);
+    console.error("Unexpected error:", err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
-      error: err.message
+      message: "Internal server error",
+      error: err.message,
     });
   }
 });
@@ -450,7 +452,7 @@ router.patch('/promotion/:id', async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.delete('/promotion/:id', async (req, res) => {
+router.delete("/promotion/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -458,84 +460,148 @@ router.delete('/promotion/:id', async (req, res) => {
     if (!id || !isValidUUID(id)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid promotion ID provided'
+        message: "Invalid promotion ID provided",
       });
     }
 
     // Check if promotion exists
     const { data: existingPromotion, error: checkError } = await supabase
-      .from('promotion')
-      .select('*')
-      .eq('id', id)
+      .from("promotion")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (checkError) {
-      if (checkError.code === 'PGRST116') {
+      if (checkError.code === "PGRST116") {
         return res.status(404).json({
           success: false,
-          message: 'Promotion not found'
+          message: "Promotion not found",
         });
       }
 
-      console.error('Error checking promotion existence:', checkError);
+      console.error("Error checking promotion existence:", checkError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to check promotion existence',
-        error: checkError.message
+        message: "Failed to check promotion existence",
+        error: checkError.message,
       });
     }
 
     // Check if promotion is used by students
-    const { data: studentsUsingPromotion, error: studentsCheckError } = await supabase
-      .from('student')
-      .select('id')
-      .eq('id_prom', id)
-      .limit(1);
+    const { data: studentsUsingPromotion, error: studentsCheckError } =
+      await supabase
+        .from("student")
+        .select("id")
+        .eq("id_promotion", id)
+        .limit(1);
 
     if (studentsCheckError) {
-      console.error('Error checking students using promotion:', studentsCheckError);
+      console.error(
+        "Error checking students using promotion:",
+        studentsCheckError
+      );
       return res.status(500).json({
         success: false,
-        message: 'Failed to check promotion usage',
-        error: studentsCheckError.message
+        message: "Failed to check promotion usage",
+        error: studentsCheckError.message,
       });
     }
 
     if (studentsUsingPromotion && studentsUsingPromotion.length > 0) {
       return res.status(409).json({
         success: false,
-        message: 'Cannot delete promotion: it is currently used by students'
+        message: "Cannot delete promotion: it is currently used by students",
       });
     }
 
-    const { error } = await supabase
-      .from('promotion')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from("promotion").delete().eq("id", id);
 
     if (error) {
-      console.error('Error deleting promotion:', error);
+      console.error("Error deleting promotion:", error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to delete promotion',
-        error: error.message
+        message: "Failed to delete promotion",
+        error: error.message,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Promotion deleted successfully',
+      message: "Promotion deleted successfully",
       data: {
-        deletedPromotion: existingPromotion
-      }
+        deletedPromotion: existingPromotion,
+      },
     });
-
   } catch (err) {
-    console.error('Unexpected error:', err);
+    console.error("Unexpected error:", err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
-      error: err.message
+      message: "Internal server error",
+      error: err.message,
+    });
+  }
+});
+
+// get students by promotion
+router.get("/students/promotion/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("=== GET STUDENTS BY PROMOTION DEBUG ===");
+    console.log("Promotion ID:", id);
+
+    // validate that id is a valid UUID
+    if (!id || !isValidUUID(id)) {
+      console.log("Invalid UUID provided:", id);
+      return res.status(400).json({
+        success: false,
+        message: "Invalid promotion ID provided",
+      });
+    }
+
+    console.log("Fetching students for promotion:", id);
+
+    // D'abord, essayons de voir la structure de la table
+    const { data: structureData, error: structureError } = await supabase
+      .from("student")
+      .select("*")
+      .limit(1);
+
+    console.log("Table structure check:", { structureData, structureError });
+
+    const { data, error } = await supabase
+      .from("student")
+      .select(
+        `
+        id,
+        student_number,
+        id_user_profile
+      `
+      )
+      .eq("id_promotion", id);
+
+    console.log("Query result:", { data, error });
+
+    if (error) {
+      console.error("Error fetching students by promotion:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to fetch students by promotion",
+        error: error.message,
+      });
+    }
+
+    console.log("Students found:", data?.length || 0);
+    res.status(200).json({
+      success: true,
+      message: "Students retrieved successfully",
+      data: data,
+    });
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
     });
   }
 });
