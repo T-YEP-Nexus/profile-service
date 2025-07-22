@@ -57,6 +57,77 @@ router.get('/students', async (req, res) => {
   }
 });
 
+// get students by promotion id
+/**
+ * @swagger
+ * /students/promotion/{id_promotion}:
+ *   get:
+ *     summary: Get all students in a specific promotion
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: id_promotion
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The UUID of the promotion.
+ *     responses:
+ *       200:
+ *         description: A list of students in the promotion.
+ *       400:
+ *         description: Invalid promotion ID provided.
+ *       404:
+ *         description: No students found for this promotion.
+ */
+router.get('/students/promotion/:id_promotion', async (req, res) => {
+  try {
+    const { id_promotion } = req.params;
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!id_promotion || !uuidRegex.test(id_promotion)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid promotion ID provided'
+      });
+    }
+
+    const { data, error } = await supabase
+      .from('student')
+      .select('*, profile: "user-profile"!inner(*)')
+      .eq('id_promotion', id_promotion);
+
+    if (error) {
+      console.error('Error fetching students by promotion:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch students for the promotion',
+        error: error.message
+      });
+    }
+
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No students found for this promotion'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Students retrieved successfully for the promotion',
+      data: data
+    });
+
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: err.message
+    });
+  }
+});
+
 // get a student by id
 
 /**
