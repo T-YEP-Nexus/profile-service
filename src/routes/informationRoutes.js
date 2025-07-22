@@ -160,6 +160,8 @@ router.post('/information', async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
+ *               title:
+ *                 type: string
  *               message:
  *                 type: string
  *               id_creator:
@@ -177,10 +179,11 @@ router.post('/information', async (req, res) => {
 router.patch('/information/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const { message, id_creator } = req.body;
+    const { title, message, id_creator } = req.body;
     if (isNaN(id)) return res.status(400).json({ success: false, message: 'Invalid ID' });
 
     const updateFields = {};
+    if (title) updateFields.title = title;
     if (message) updateFields.message = message;
     if (typeof id_creator === 'number') updateFields.id_creator = id_creator;
 
