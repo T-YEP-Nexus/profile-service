@@ -57,6 +57,54 @@ router.get('/students', async (req, res) => {
   }
 });
 
+// get all active students (for calendar service)
+/**
+ * @swagger
+ * /students/active:
+ *   get:
+ *     summary: Get all active students
+ *     tags: [Students]
+ *     responses:
+ *       200:
+ *         description: Active students retrieved successfully
+ *       500:
+ *         description: Server error
+ */
+router.get('/students/active', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('user-profile')
+      .select('id, id_user, is_active, roles_user')
+      .eq('roles_user', 'student')
+      .eq('is_active', true);
+
+    if (error) {
+      console.error('Error fetching active students:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch active students',
+        error: error.message
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Active students retrieved successfully',
+      data: data,
+      count: data.length
+    });
+
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: err.message
+    });
+  }
+});
+
+
 // get students by promotion id
 /**
  * @swagger
