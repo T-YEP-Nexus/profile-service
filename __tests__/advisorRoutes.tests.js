@@ -15,7 +15,8 @@ describe('Advisor CRUD Routes (Integration)', () => {
   });
 
   describe('GET /advisor/:id - Get advisor by ID', () => {
-    const validID = 12;
+    // change the ID based on the test DB
+    const validID = 29;
 
     it('should return advisor by valid ID', async () => {
       const response = await request(BASE_URL).get(`/advisor/${validID}`);
@@ -32,7 +33,8 @@ describe('Advisor CRUD Routes (Integration)', () => {
 
   describe('GET /advisor/profile/:id_user_profile - Get advisor by user profile id', () => {
     it('should return advisor by valid user profile id', async () => {
-      const userID = 7;
+      // change the userID based on the test DB
+      const userID = 32;
       const response = await request(BASE_URL).get(`/advisor/profile/${userID}`);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -51,7 +53,8 @@ describe('Advisor CRUD Routes (Integration)', () => {
         specialty: 'projectmanagement',
         room: '1-9',
         availability: '5j/7',
-        id_user_profile: 14
+        // Make sure this user profile ID exists in your test DB and is not already an advisor
+        id_user_profile: 8
       };
 
       const response = await request(BASE_URL).post('/advisor').send(newAdvisor);
@@ -67,7 +70,7 @@ describe('Advisor CRUD Routes (Integration)', () => {
           specialty: 'projectmanagement',
           room: '1-9',
           availability: '5j/7',
-          id_user_profile: 14
+          id_user_profile: 8 // Same user profile ID as before (existing)
         });
         expect(response.status).toBe(409);
     });
