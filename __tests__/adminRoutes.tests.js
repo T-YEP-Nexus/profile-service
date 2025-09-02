@@ -48,8 +48,9 @@ describe('Admin CRUD Routes (Integration)', () => {
 
   describe('POST /admin - Create new admin', () => {
     it('should create admin successfully', async () => {
+      // change the id user profile to an existing user
       const newAdmin = {
-        id_user_profile: 7
+        id_user_profile: 33
       };
 
       const response = await request(BASE_URL).post('/admin').send(newAdmin);
@@ -78,7 +79,7 @@ describe('Admin CRUD Routes (Integration)', () => {
       expect(testAdminId).toBeTruthy();
       const response = await request(BASE_URL)
         .patch(`/admin/${testAdminId}`)
-        .send({ id_user_profile: 6 });
+        .send({ id_user_profile: 34 });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
