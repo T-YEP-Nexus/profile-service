@@ -55,6 +55,7 @@ describe('Admin CRUD Routes (Integration)', () => {
     });
   });
 
+  // adapt id here based on test DB
   describe('GET /admin/profile/:user_profile_id - Get event by event type', () => {
     it('should return admin by valid profile id', async () => {
       const profileID = 4;
