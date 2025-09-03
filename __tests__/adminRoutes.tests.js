@@ -5,51 +5,11 @@ const BASE_URL = 'http://localhost:3004';
 let testAdminId = null;
 
 describe('Admin CRUD Routes (Integration)', () => {
-  describe('GET /admins - Get all admins', () => {
-    it('should return all admins successfully', async () => {
-      const response = await request(BASE_URL).get('/admins');
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(Array.isArray(response.body.data)).toBe(true);
-    });
-  });
-
-  describe('GET /admin/:id - Get admin by ID', () => {
-    const validID = 1;
-
-    it('should return admin by valid ID', async () => {
-      const response = await request(BASE_URL).get(`/admin/${validID}`);
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.data.id).toBe(validID);
-    });
-
-    it('should return 404 for non-existent admin', async () => {
-      const response = await request(BASE_URL).get('/admin/60000000000');
-      expect(response.status).toBe(404);
-    });
-  });
-
-  describe('GET /admin/profile/:user_profile_id - Get event by event type', () => {
-    it('should return admin by valid profile id', async () => {
-      const profileID = 4;
-      const response = await request(BASE_URL).get(`/admin/profile/${profileID}`);
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.data.id_user_profile).toBe(profileID);
-    });
-
-    it('should return 400 for invalid profile id', async () => {
-      const response = await request(BASE_URL).get('/admin/profile/invalidtype');
-      expect(response.status).toBe(400);
-    });
-
-  });
-
   describe('POST /admin - Create new admin', () => {
     it('should create admin successfully', async () => {
+      // change the id user profile to an existing user
       const newAdmin = {
-        id_user_profile: 7
+        id_user_profile: 33
       };
 
       const response = await request(BASE_URL).post('/admin').send(newAdmin);
@@ -72,13 +32,53 @@ describe('Admin CRUD Routes (Integration)', () => {
     });
   });
 
+  describe('GET /admins - Get all admins', () => {
+    it('should return all admins successfully', async () => {
+      const response = await request(BASE_URL).get('/admins');
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(Array.isArray(response.body.data)).toBe(true);
+    });
+  });
+
+  describe('GET /admin/:id - Get admin by ID', () => {
+    it('should return admin by valid ID', async () => {
+      const response = await request(BASE_URL).get(`/admin/${testAdminId}`);
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.id).toBe(testAdminId);
+    });
+
+    it('should return 404 for non-existent admin', async () => {
+      const response = await request(BASE_URL).get('/admin/60000000000');
+      expect(response.status).toBe(404);
+    });
+  });
+
+  // adapt id here based on test DB
+  describe('GET /admin/profile/:user_profile_id - Get event by event type', () => {
+    it('should return admin by valid profile id', async () => {
+      const profileID = 4;
+      const response = await request(BASE_URL).get(`/admin/profile/${profileID}`);
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.id_user_profile).toBe(profileID);
+    });
+
+    it('should return 400 for invalid profile id', async () => {
+      const response = await request(BASE_URL).get('/admin/profile/invalidtype');
+      expect(response.status).toBe(400);
+    });
+
+  });
+
   describe('PATCH /admin/:id - Update admin', () => {
 
     it('should update the admin successfully', async () => {
       expect(testAdminId).toBeTruthy();
       const response = await request(BASE_URL)
         .patch(`/admin/${testAdminId}`)
-        .send({ id_user_profile: 6 });
+        .send({ id_user_profile: 34 });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);

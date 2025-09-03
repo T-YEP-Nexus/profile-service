@@ -3,55 +3,17 @@ const request = require('supertest');
 const BASE_URL = 'http://localhost:3004';
 
 let testAdvisorId = null;
+let testAdvisorUserId = null;
 
 describe('Advisor CRUD Routes (Integration)', () => {
-  describe('GET /advisors - Get all advisors', () => {
-    it('should return all advisors successfully', async () => {
-      const response = await request(BASE_URL).get('/advisors');
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(Array.isArray(response.body.data)).toBe(true);
-    });
-  });
-
-  describe('GET /advisor/:id - Get advisor by ID', () => {
-    const validID = 12;
-
-    it('should return advisor by valid ID', async () => {
-      const response = await request(BASE_URL).get(`/advisor/${validID}`);
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.data.id).toBe(validID);
-    });
-
-    it('should return 404 for non-existent advisor', async () => {
-      const response = await request(BASE_URL).get('/advisor/60000000000');
-      expect(response.status).toBe(404);
-    });
-  });
-
-  describe('GET /advisor/profile/:id_user_profile - Get advisor by user profile id', () => {
-    it('should return advisor by valid user profile id', async () => {
-      const userID = 7;
-      const response = await request(BASE_URL).get(`/advisor/profile/${userID}`);
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.data.id_user_profile).toBe(userID);
-    });
-
-    it('should return 400 for invalid user id', async () => {
-      const response = await request(BASE_URL).get('/advisor/profile/invalidtype');
-      expect(response.status).toBe(400);
-    });
-  });
-
   describe('POST /advisor - Create new advisor', () => {
     it('should create advisor successfully', async () => {
       const newAdvisor = {
         specialty: 'projectmanagement',
         room: '1-9',
         availability: '5j/7',
-        id_user_profile: 14
+        // Make sure this user profile ID exists in your test DB and is not already an advisor
+        id_user_profile: 8
       };
 
       const response = await request(BASE_URL).post('/advisor').send(newAdvisor);
@@ -59,6 +21,7 @@ describe('Advisor CRUD Routes (Integration)', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data.id_user_profile).toBe(newAdvisor.id_user_profile);
 
+      testAdvisorUserId = newAdvisor.id_user_profile;
       testAdvisorId = response.body.data.id;
     });
 
@@ -67,7 +30,7 @@ describe('Advisor CRUD Routes (Integration)', () => {
           specialty: 'projectmanagement',
           room: '1-9',
           availability: '5j/7',
-          id_user_profile: 14
+          id_user_profile: testAdvisorUserId
         });
         expect(response.status).toBe(409);
     });
@@ -78,6 +41,43 @@ describe('Advisor CRUD Routes (Integration)', () => {
         room: '1-9',
         availability: '5j/7'
       });
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('GET /advisors - Get all advisors', () => {
+    it('should return all advisors successfully', async () => {
+      const response = await request(BASE_URL).get('/advisors');
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(Array.isArray(response.body.data)).toBe(true);
+    });
+  });
+
+  describe('GET /advisor/:id - Get advisor by ID', () => {
+    it('should return advisor by valid ID', async () => {
+      const response = await request(BASE_URL).get(`/advisor/${testAdvisorId}`);
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.id).toBe(testAdvisorId);
+    });
+
+    it('should return 404 for non-existent advisor', async () => {
+      const response = await request(BASE_URL).get('/advisor/60000000000');
+      expect(response.status).toBe(404);
+    });
+  });
+
+  describe('GET /advisor/profile/:id_user_profile - Get advisor by user profile id', () => {
+    it('should return advisor by valid user profile id', async () => {
+      const response = await request(BASE_URL).get(`/advisor/profile/${testAdvisorUserId}`);
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.id_user_profile).toBe(testAdvisorUserId);
+    });
+
+    it('should return 400 for invalid user id', async () => {
+      const response = await request(BASE_URL).get('/advisor/profile/invalidtype');
       expect(response.status).toBe(400);
     });
   });
