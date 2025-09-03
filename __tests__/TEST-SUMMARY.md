@@ -142,7 +142,7 @@ __tests__/
 ├── profileRoutes.tests.js        # Tests CRUD Profile
 ├── promotionRoutes.tests.js      # Tests CRUD Promotion
 ├── studentRoutes.tests.js        # Tests CRUD Student
-└── README.md                     # Documentation des tests
+└── TEST-SUMMARY.md                     # Documentation des tests
 ```
 
 ## 🚀 Scripts de Test Disponibles
