@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import de la configuration Supabase
-const supabase = require('../../config/supabaseClient');
+const supabase = require('../../../config/supabaseClient');
 
 // crud routes for the 'user-profile' table
 /**
@@ -85,7 +85,6 @@ router.get('/profiles', async (req, res) => {
 router.get('/profile/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('DEBUG /profile/:id - id reçu:', id, 'type:', typeof id);
 
     // validate that id is a number
     const profileId = parseInt(id);

@@ -1,9 +1,6 @@
 const express = require('express');
-
 const router = express.Router();
-
-// Import de la configuration Supabase
-const supabase = require('../../config/supabaseClient');
+const supabase = require('../../../config/supabaseClient');
 
 // crud routes for the 'admin' table
 /**
@@ -85,7 +82,6 @@ router.get('/admins', async (req, res) => {
 router.get('/admin/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('DEBUG /admin/:id - id reçu:', id, 'type:', typeof id);
 
     // validate that id is a number
     const adminId = parseInt(id);
@@ -134,7 +130,7 @@ router.get('/admin/:id', async (req, res) => {
   }
 });
 
-// get an admin by user_profile_id
+// get an admin by user_profile_id $ 
 /**
  * @swagger
  * /admin/profile/{user_profile_id}:

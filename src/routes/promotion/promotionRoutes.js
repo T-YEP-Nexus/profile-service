@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const supabase = require("../../config/supabaseClient");
+const supabase = require("../../../config/supabaseClient");
 
 // Helper function to validate UUID
 const isValidUUID = (uuid) => {
@@ -137,69 +137,7 @@ router.get("/promotion/:id", async (req, res) => {
   }
 });
 
-// get a promotion by name
-/**
- * @swagger
- * /promotion/name/{name}:
- *   get:
- *     summary: Get a promotion by name (case-insensitive)
- *     tags: [Promotions]
- *     parameters:
- *       - in: path
- *         name: name
- *         required: true
- *         schema:
- *           type: string
- *         description: Name (or partial name) of the promotion
- *     responses:
- *       200:
- *         description: Promotions matching name retrieved successfully
- *       400:
- *         description: Promotion name is required
- *       500:
- *         description: Server error
- */
-router.get("/promotion/name/:name", async (req, res) => {
-  try {
-    const { name } = req.params;
 
-    if (!name || name.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "Promotion name is required",
-      });
-    }
-
-    const { data, error } = await supabase
-      .from("promotion")
-      .select("*")
-      .ilike("name", `%${name}%`)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching promotion by name:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to fetch promotion by name",
-        error: error.message,
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: `Promotions matching '${name}' retrieved successfully`,
-      data: data,
-      count: data.length,
-    });
-  } catch (err) {
-    console.error("Unexpected error:", err);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: err.message,
-    });
-  }
-});
 
 // create a promotion
 /**
@@ -542,68 +480,5 @@ router.delete("/promotion/:id", async (req, res) => {
   }
 });
 
-// get students by promotion
-router.get("/students/promotion/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log("=== GET STUDENTS BY PROMOTION DEBUG ===");
-    console.log("Promotion ID:", id);
-
-    // validate that id is a valid UUID
-    if (!id || !isValidUUID(id)) {
-      console.log("Invalid UUID provided:", id);
-      return res.status(400).json({
-        success: false,
-        message: "Invalid promotion ID provided",
-      });
-    }
-
-    console.log("Fetching students for promotion:", id);
-
-    // D'abord, essayons de voir la structure de la table
-    const { data: structureData, error: structureError } = await supabase
-      .from("student")
-      .select("*")
-      .limit(1);
-
-    console.log("Table structure check:", { structureData, structureError });
-
-    const { data, error } = await supabase
-      .from("student")
-      .select(
-        `
-        id,
-        student_number,
-        id_user_profile
-      `
-      )
-      .eq("id_promotion", id);
-
-    console.log("Query result:", { data, error });
-
-    if (error) {
-      console.error("Error fetching students by promotion:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to fetch students by promotion",
-        error: error.message,
-      });
-    }
-
-    console.log("Students found:", data?.length || 0);
-    res.status(200).json({
-      success: true,
-      message: "Students retrieved successfully",
-      data: data,
-    });
-  } catch (err) {
-    console.error("Unexpected error:", err);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: err.message,
-    });
-  }
-});
 
 module.exports = router;
