@@ -13,19 +13,32 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const profileRoutes = require('./routes/profileRoutes.js');
-const studentRoutes = require('./routes/studentRoutes.js');
-const advisorRoutes = require('./routes/advisorRoutes.js');
-const adminRoutes = require('./routes/adminRoutes.js');
-const promRoutes = require('./routes/promotionRoutes.js');
-const informationRoutes = require('./routes/informationRoutes.js');
+const studentRoutes = require('./routes/student/studentRoutes.js');
+const studentMiscRoutes = require('./routes/student/misc/misc.js');
+
+const profileRoutes = require('./routes/profile/profileRoutes.js');
+
+const advisorRoutes = require('./routes/advisor/advisorRoutes.js');
+const advisorMiscRoutes = require('./routes/advisor/misc/misc.js');
+
+
+const adminRoutes = require('./routes/admin/adminRoutes.js');
+const promRoutes = require('./routes/promotion/promotionRoutes.js');
+const promMiscRoutes = require('./routes/promotion/misc/misc.js');
+
+const informationRoutes = require('./routes/information/informationRoutes.js');
 
 app.use('', profileRoutes);
 app.use('', advisorRoutes);
-app.use('', studentRoutes);
+app.use('', advisorMiscRoutes);
+
 app.use('', adminRoutes);
 app.use('', promRoutes);
+app.use('', promMiscRoutes);
 app.use('', informationRoutes);
+
+app.use('', studentRoutes);
+app.use('', studentMiscRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
