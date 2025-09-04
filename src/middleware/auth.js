@@ -10,7 +10,17 @@ module.exports = async function authMiddleware(req, res, next) {
   // Toutes les routes nécessitent une authentification
 
   try {
-    const token = req.cookies && req.cookies.token;
+    // Support both cookie-based and header-based authentication
+    let token = req.cookies && req.cookies.token;
+
+    // If no cookie token, check Authorization header
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.substring(7); // Remove "Bearer " prefix
+      }
+    }
+
     if (!token) {
       return res.status(401).json({
         success: false,
