@@ -32,6 +32,7 @@ cp .env.example .env
 | `SUPABASE_URL` | URL de votre instance Supabase | `https://xxx.supabase.co` | ✅ |
 | `SUPABASE_SERVICE_ROLE_KEY` | Clé de service Supabase (admin) | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` | ✅ |
 | `FRONTEND_URL` | URL du frontend pour CORS | `http://localhost:3000` | ✅ |
+| `JWT_SECRET` | Token JWT pour authentification login | `jwtsecrethere` | ✅ |
 
 ### 🔐 **Configuration Supabase**
 
