@@ -4,6 +4,13 @@ const router = express.Router();
 
 const supabase = require("../../../../config/supabaseClient");
 
+// Helper function to validate UUID
+const isValidUUID = (uuid) => {
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+};
+
 // crud routes for the 'promotion' table
 /**
  * @swagger
@@ -12,13 +19,12 @@ const supabase = require("../../../../config/supabaseClient");
  *   description: API for managing promotions
  */
 
-
 // get students by promotion $
 /**
  * @swagger
  * /students/promotion/{id}:
  *   get:
- *     summary: Get students by promotion id 
+ *     summary: Get students by promotion id
  *     tags: [Promotions/Misc]
  *     parameters:
  *       - in: path
@@ -39,7 +45,6 @@ router.get("/students/promotion/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-
     // validate that id is a valid UUID
     if (!id || !isValidUUID(id)) {
       return res.status(400).json({
@@ -48,13 +53,11 @@ router.get("/students/promotion/:id", async (req, res) => {
       });
     }
 
-
     // D'abord, essayons de voir la structure de la table
     const { data: structureData, error: structureError } = await supabase
       .from("student")
       .select("*")
       .limit(1);
-
 
     const { data, error } = await supabase
       .from("student")
@@ -66,7 +69,6 @@ router.get("/students/promotion/:id", async (req, res) => {
       `
       )
       .eq("id_promotion", id);
-
 
     if (error) {
       console.error("Error fetching students by promotion:", error);
