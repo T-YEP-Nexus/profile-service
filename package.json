@@ -1,7 +1,7 @@
 {
-    "name": "auth-service",
+    "name": "profile-service",
     "version": "1.0.0",
-    "description": "Service d'authentification pour architecture microservices",
+    "description": "Service de profil pour architecture microservices",
     "main": "src/index.js",
     "scripts": {
         "start": "node src/index.js",
@@ -42,10 +42,5 @@
     },
     "engines": {
         "node": ">=18.0.0"
-    },
-    "jest": {
-        "testEnvironment": "node",
-        "maxWorkers": 1,
-        "testTimeout": 30000
     }
 }
